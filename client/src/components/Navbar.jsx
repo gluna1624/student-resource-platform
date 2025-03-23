@@ -1,6 +1,15 @@
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Navbar() {
+  const navigate = useNavigate();
+  const isLoggedIn = !!localStorage.getItem('token');
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
   return (
     <header style={{
       background: 'linear-gradient(90deg, #ff4b5c, #ff8c00)',
@@ -64,6 +73,53 @@ function Navbar() {
         }}>
           Upload
         </Link>
+        {isLoggedIn ? (
+          <button
+            onClick={handleLogout}
+            style={{
+              color: '#fff',
+              fontSize: '1.2rem',
+              fontWeight: '600',
+              padding: '0.5rem 1rem',
+              borderRadius: '8px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background 0.3s ease, transform 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = 'rgba(255, 255, 255, 0.3)';
+              e.target.style.transform = 'scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+              e.target.style.transform = 'scale(1)';
+            }}
+          >
+            Logout
+          </button>
+        ) : (
+          <Link to="/login" style={{
+            color: '#fff',
+            textDecoration: 'none',
+            fontSize: '1.2rem',
+            fontWeight: '600',
+            padding: '0.5rem 1rem',
+            borderRadius: '8px',
+            background: 'rgba(255, 255, 255, 0.1)',
+            transition: 'background 0.3s ease, transform 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.background = 'rgba(255, 255, 255, 0.3)';
+            e.target.style.transform = 'scale(1.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+            e.target.style.transform = 'scale(1)';
+          }}>
+            Login
+          </Link>
+        )}
       </nav>
     </header>
   );
