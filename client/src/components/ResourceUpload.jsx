@@ -1,48 +1,57 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-function ResourceUpload() {
+export default function ResourceUpload() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5001/resources', { title, description });
-      setTitle('');
-      setDescription('');
-      alert('Resource uploaded successfully!');
+      await axios.post('http://localhost:5001/resources', { title, description, category }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      navigate('/');
     } catch (error) {
       console.error('Error uploading resource:', error);
-      alert('Failed to upload resource.');
     }
   };
 
   return (
-    <div className="upload-form">
-      <h2>Upload a Resource</h2>
+    <div className="container">
+      <h2>Upload Resource</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Title:</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Description:</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Upload</button>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Title"
+          style={{ display: 'block', margin: '1rem 0', width: '100%' }}
+        />
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Description"
+          style={{ display: 'block', margin: '1rem 0', width: '100%', height: '100px' }}
+        />
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          style={{ display: 'block', margin: '1rem 0', width: '100%' }}
+        >
+          <option value="">Select Category</option>
+          <option value="Math">Math</option>
+          <option value="Physics">Physics</option>
+          <option value="CS">Computer Science</option>
+          <option value="Other">Other</option>
+        </select>
+        <button type="submit" style={{ padding: '0.5rem 1rem', background: '#ff4b5c', color: '#fff', border: 'none', borderRadius: '4px' }}>
+          Upload
+        </button>
       </form>
     </div>
   );
 }
-
-export default ResourceUpload;

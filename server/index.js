@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const app = express();
-const SECRET_KEY = 'your-secret-key'; // Change this later!
+const SECRET_KEY = 'your-secret-key';
 
 app.use(cors());
 app.use(express.json());
@@ -17,19 +17,17 @@ const db = mysql.createPool({
   database: 'student_platform',
 });
 
-// Register
 app.post('/register', async (req, res) => {
   const { username, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   try {
-    const [result] = await db.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, hashedPassword]);
+    const [result] = await db.query('INSERT INTO users (username, password, isAdmin) VALUES (?, ?, 0)', [username, hashedPassword]);
     res.status(201).json({ id: result.insertId, username });
   } catch (error) {
     res.status(500).send('Server error');
   }
 });
 
-// Login
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -37,14 +35,13 @@ app.post('/login', async (req, res) => {
     if (rows.length === 0 || !(await bcrypt.compare(password, rows[0].password))) {
       return res.status(401).send('Invalid credentials');
     }
-    const token = jwt.sign({ id: rows[0].id, username }, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ id: rows[0].id, username, isAdmin: rows[0].isAdmin }, SECRET_KEY, { expiresIn: '1h' });
     res.json({ token });
   } catch (error) {
     res.status(500).send('Server error');
   }
 });
 
-// Auth middleware
 const authenticate = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1];
   if (!token) return res.status(401).send('No token');
@@ -55,10 +52,16 @@ const authenticate = (req, res, next) => {
   });
 };
 
-// Existing routes
+const isAdmin = (req, res, next) => {
+  if (!req.user.isAdmin) return res.status(403).send('Admin access required');
+  next();
+};
+
 app.get('/resources', async (req, res) => {
+  const { category } = req.query;
   try {
-    const [rows] = await db.query('SELECT * FROM resources');
+    const query = category ? 'SELECT * FROM resources WHERE category = ?' : 'SELECT * FROM resources';
+    const [rows] = await db.query(query, category ? [category] : []);
     res.json(rows);
   } catch (error) {
     res.status(500).send('Server error');
@@ -86,10 +89,45 @@ app.get('/resources/:id', async (req, res) => {
 });
 
 app.post('/resources', authenticate, async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, category } = req.body;
   try {
-    const [result] = await db.query('INSERT INTO resources (title, description) VALUES (?, ?)', [title, description]);
-    res.status(201).json({ id: result.insertId, title, description });
+    const [result] = await db.query('INSERT INTO resources (title, description, category) VALUES (?, ?, ?)', [title, description, category]);
+    res.status(201).json({ id: result.insertId, title, description, category });
+  } catch (error) {
+    res.status(500).send('Server error');
+  }
+});
+
+app.delete('/resources/:id', authenticate, isAdmin, async (req, res) => {
+  try {
+    const [result] = await db.query('DELETE FROM resources WHERE id = ?', [req.params.id]);
+    if (result.affectedRows > 0) res.send('Resource deleted');
+    else res.status(404).send('Resource not found');
+  } catch (error) {
+    res.status(500).send('Server error');
+  }
+});
+
+app.get('/resources/:id/comments', async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      'SELECT c.id, c.content, c.user_id, u.username FROM comments c JOIN users u ON c.user_id = u.id WHERE c.resource_id = ?',
+      [req.params.id]
+    );
+    res.json(rows);
+  } catch (error) {
+    res.status(500).send('Server error');
+  }
+});
+
+app.post('/resources/:id/comments', authenticate, async (req, res) => {
+  const { content } = req.body;
+  try {
+    const [result] = await db.query(
+      'INSERT INTO comments (resource_id, user_id, content) VALUES (?, ?, ?)',
+      [req.params.id, req.user.id, content]
+    );
+    res.status(201).json({ id: result.insertId, content, user_id: req.user.id, username: req.user.username });
   } catch (error) {
     res.status(500).send('Server error');
   }

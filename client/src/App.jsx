@@ -3,7 +3,8 @@ import Navbar from './components/Navbar';
 import ResourceList from './components/ResourceList';
 import ResourceDetail from './components/ResourceDetail';
 import ResourceUpload from './components/ResourceUpload';
-import Login from './components/Login'; // Adjusted path
+import Login from './components/Login';
+import AdminPanel from './components/AdminPanel';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/resources/:id" element={<ResourceDetail />} />
           <Route path="/upload" element={<ResourceUpload />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/admin" element={<AdminPanel />} />
         </Routes>
       </div>
     </BrowserRouter>

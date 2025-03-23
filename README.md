@@ -1,123 +1,59 @@
-markdown
-
-# Student Resource Sharing Platform
-
-Welcome to the **Student Resource Sharing Platform**, a full-stack web app built from the ground up for CS-691 at LIU Spring 2025. This project, living on the `gluna1624` branch, lets students share and explore academic resources with a flashy, modern twist—think resource lists, details, uploads, and search, all wrapped in a vibrant UI. Here’s the journey of how it came to life!
-
-## Project Overview
-
-- **Goal**: Create a local web app where students can view, upload, and search study resources (e.g., notes, guides).  
-- **Tech Stack**:  
-  - **Frontend**: React (Vite) for a dynamic, animated UI.  
-  - **Backend**: Node.js with Express for API magic.  
-  - **Database**: MySQL for storing resources.  
-- **Features**: Resource listing, detail views, text-based uploads, and a snappy search bar.
-
-## How It Was Built
-
-### Setup (Week 1 Vibes)
-
-Started on a fresh MacBook Air M4 (16 GB RAM, 256 GB SSD) on March 22, 2025: Installed tools with Homebrew: `brew install node mysql git`. Set up VS Code for editing. Created the project folder: `~/Desktop/student-resource-platform` with `client` (frontend) and `server` (backend) subfolders.
-
-### Backend (Node.js + MySQL)
-
-Initialized Node.js: `npm init -y` and installed `express`, `mysql2`, `cors`. Wrote `server/index.js` with endpoints: `GET /resources`: Lists all resources. `GET /resources/:id`: Shows one resource. `POST /resources`: Adds a new resource. `GET /resources/search?q=query`: Searches titles/descriptions. Connected to MySQL (`student_platform` database, `root` user, `root123` password) with a `resources` table (`id`, `title`, `description`). Ran into port 5000 conflicts (macOS Control Center), switched to 5001.
-
-### Frontend (React with Vite)
-
-Set up React: `npm create vite@latest . -- --template react` in `client`, added `axios` and `react-router-dom`. Built components in `client/src/components/`: `Navbar.jsx`: A gradient header with “StudyHub” branding. `ResourceList.jsx`: Animated resource cards that bounce in. `ResourceDetail.jsx`: Sleek detail view. `ResourceUpload.jsx`: Flashy upload form. `SearchBar.jsx`: Quick search with bold styling. Routed it all in `App.jsx` with `react-router-dom`.
-
-### Styling for Wow Factor
-
-Added `styles.css` with gradients, shadows, and animations (e.g., `bounceIn` for cards). Imported Poppins font via `main.jsx` for a pro look. Tweaked colors (reds, oranges) and hover effects to ditch the “newbie” vibe.
-
-### GitHub Push
-
-Installed Git: `brew install git`. Initialized repo: `git init`, committed files: `git add . && git commit -m "Initial commit"`. Set SSH with a new key (`SHA256:UkOuQnKc...`), added to GitHub as “MacBook M4 2025”. Force-pushed to `gluna1624` branch: `git push origin HEAD:gluna1624 --force`.
-
-## Running It Locally
-
-1. **Clone the Repo**:  
-   ```bash  
-   git clone -b gluna1624 https://github.com/LIUSpring2025/CS-691.git  
-   cd CS-691  
-
-Backend Setup:  
-bash
-
-cd server  
-npm install  
-brew services start mysql  
-mysql -u root -p  # Use 'root123', create 'student_platform' DB and 'resources' table  
-node index.js  
-
-Frontend Setup:  
-bash
-
-cd ../client  
-npm install  
-npm run dev  
-
-Open http://localhost:5173—boom, it’s live!
-
-Challenges Overcome
-Silent Node.js crashes (missing app.listen).  
-
-MySQL ECONNREFUSED (forgot to restart after shutdown).  
-
-GitHub auth woes (switched from HTTPS to SSH).
-
-What’s Here
-A local app with a pro-grade UI, resource sharing, and search—ready to impress! Check gluna1624 branch for the latest.
-Author: Gregory Luna (gluna1624, gregory.luna@my.liu.edu)
-
 # Student Resource Sharing Platform
 
 ## Overview
-This is a web application built for students to share and access study resources. It features a flashy UI with a React frontend, a Node.js/Express backend, and a MySQL database. Users can list resources, view details, upload new resources, and search for them. Recently, a login system was added to secure uploads and personalize the experience.
+This is a web application built for students to share and access study resources. It features a flashy UI with a React frontend, a Node.js/Express backend, and a MySQL database. Users can list resources, view details, upload new resources (after login), search, manage via an admin panel, and now categorize resources with tags.
 
 ## Features
-- **Resource Listing**: Displays all resources as animated cards with a bounce-in effect.
-- **Resource Details**: Shows detailed info for each resource.
-- **Upload**: Allows logged-in users to add new resources (title and description).
-- **Search**: Filters resources by title or description (e.g., "math" finds "Math Notes").
-- **Login System**: Users can register and log in; navbar toggles between "Login" and "Logout" based on auth status.
-- **Styling**: Gradient navbar, Poppins font, card shadows, and hover effects.
+- **Resource Listing**: Animated cards with a bounce-in effect, filterable by category.
+- **Resource Details**: Shows title, description, category, and comments.
+- **Upload**: Authenticated users can add resources with a category (e.g., "Math").
+- **Search**: Filters by title/description.
+- **Login System**: Register/login with JWT auth; navbar toggles "Login"/"Logout".
+- **Admin Panel**: Admins can delete resources; accessible via homepage button and navbar.
+- **Comments**: Users can comment on resources in the detail view.
+- **Categories**: Tag resources and filter them on the homepage.
+- **Styling**: Gradient navbar, Poppins font, hover effects.
 
 ## Tech Stack
-- **Frontend**: React (Vite), axios, react-router-dom, CSS (gradients, animations).
-- **Backend**: Node.js, Express, MySQL (mysql2), bcryptjs (password hashing), jsonwebtoken (JWT auth).
-- **Database**: MySQL with tables `resources` (id, title, description) and `users` (id, username, password).
+- **Frontend**: React (Vite), axios, react-router-dom, jwt-decode, CSS.
+- **Backend**: Node.js, Express, MySQL (mysql2), bcryptjs, jsonwebtoken.
+- **Database**: MySQL with `resources` (id, title, description, category), `users` (id, username, password, isAdmin), `comments` (id, resource_id, user_id, content).
 - **Tools**: Homebrew, Git, VS Code.
 
 ## Setup Instructions
 1. **Environment**:
-   - Install Node.js, MySQL, Git via Homebrew: `brew install node mysql git`.
-   - Set up project folder: `~/Desktop/student-resource-platform` with `client` and `server` subfolders.
+   - Install: `brew install node mysql git`.
+   - Folder: `~/Desktop/student-resource-platform` with `client` and `server`.
 2. **Backend**:
-   - `cd server`, run `npm init -y`, then `npm install express mysql2 cors bcryptjs jsonwebtoken`.
+   - `cd server`, `npm init -y`, `npm install express mysql2 cors bcryptjs jsonwebtoken`.
    - Start MySQL: `brew services start mysql`.
-   - Create database: `mysql -u root -p`, then `CREATE DATABASE student_platform;`.
-   - Create tables:
+   - Database: `mysql -u root -p`, `CREATE DATABASE student_platform;`.
+   - Tables:
      ```sql
      USE student_platform;
-     CREATE TABLE resources (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255), description TEXT);
-     CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50), password VARCHAR(255));
+     CREATE TABLE resources (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255), description TEXT, category VARCHAR(50));
+     CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50), password VARCHAR(255), isAdmin TINYINT(1) DEFAULT 0);
+     CREATE TABLE comments (id INT AUTO_INCREMENT PRIMARY KEY, resource_id INT, user_id INT, content TEXT, FOREIGN KEY (resource_id) REFERENCES resources(id), FOREIGN KEY (user_id) REFERENCES users(id));
      ```
    - Run: `node index.js`.
 3. **Frontend**:
-   - `cd client`, run `npm create vite@latest . -- --template react`, then `npm install axios react-router-dom`.
+   - `cd client`, `npm create vite@latest . -- --template react`, `npm install axios react-router-dom jwt-decode`.
    - Run: `npm run dev`.
 4. **Git**:
-   - Initialize: `git init`, add files: `git add .`, commit: `git commit -m "Initial commit with login"`.
-   - Push: `git push origin HEAD:gluna1624 --force` (assuming branch `gluna1624`).
+   - `git init`, `git add .`, `git commit -m "Add admin and categories"`.
+   - Push: `git push origin HEAD:gluna1624`.
 
 ## Progress
-- **Done**: Full local app (list, details, upload, search), login/register system, navbar auth toggle, GitHub sync (mostly).
-- **Next**: Push updated README, test login fully, consider admin section or comments.
+- **Done**: Full app with login, admin panel, comments, categories, GitHub sync.
+- **Next**: Maybe user profiles or file uploads?
+
+## Morning Updates (March 23, 2025)
+This morning, we enhanced the platform with two key features:
+- **Admin Section**: Added an admin panel at `/admin` for deleting resources, restricted to users with `isAdmin = 1` (e.g., "test" user). Added an "Admin Panel" button on the homepage (`ResourceList.jsx`) and a navbar link, both visible only to admins, using JWT token checks.
+- **Categories**: Introduced a `category` column to the `resources` table. Users can now tag resources (e.g., "Math," "Physics") during upload (`ResourceUpload.jsx`), filter them on the homepage with a dropdown (`ResourceList.jsx`), and see the category in the detail view (`ResourceDetail.jsx`). Updated backend routes to support category filtering.
 
 ## Troubleshooting
-- MySQL errors: Ensure `brew services start mysql` and correct credentials.
-- Port conflicts: Backend uses 5001 (changed from 5000).
-- Search blank: Verify database is running and populated.
-
+- MySQL: Run `brew services start mysql`.
+- Port: Uses 5001.
+- Search: Ensure database has data.
+- Routing: Verify all routes in `App.jsx`.
