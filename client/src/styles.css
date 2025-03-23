@@ -1,0 +1,183 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Poppins', 'Arial', sans-serif;
+    background: linear-gradient(135deg, #e0eafc, #cfdef3);
+    color: #1a1a2e;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  
+  /* Typography */
+  h2 {
+    font-size: 2.5rem;
+    color: #ff4b5c;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Container Styles */
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2.5rem;
+  }
+  
+  /* Resource List */
+  .resource-list {
+    display: grid;
+    gap: 2rem;
+    padding: 1rem;
+  }
+  
+  /* Resource Card */
+  .resource-card {
+    background: linear-gradient(145deg, #ffffff, #f0f4ff);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+  }
+  
+  .resource-card:hover {
+    transform: scale(1.05) rotate(1deg);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(145deg, #ffebcc, #ffd699);
+  }
+  
+  .resource-card a {
+    color: #ff4b5c;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .resource-card a:hover {
+    color: #ff8c00;
+  }
+  
+  /* Upload Form */
+  .upload-form {
+    background: #fff;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    max-width: 650px;
+    margin: 3rem auto;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+    animation: popUp 0.6s ease-in-out;
+  }
+  
+  .upload-form:hover {
+    transform: translateY(-5px);
+  }
+  
+  .upload-form label {
+    display: block;
+    font-weight: 600;
+    color: #1a2a44;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+  }
+  
+  .upload-form input,
+  .upload-form textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #ff8c00;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    background-color: #fff5e6;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .upload-form input:focus,
+  .upload-form textarea:focus {
+    border-color: #ff4b5c;
+    box-shadow: 0 0 8px rgba(255, 75, 92, 0.4);
+    outline: none;
+  }
+  
+  .upload-form textarea {
+    min-height: 150px;
+    resize: vertical;
+  }
+  
+  .upload-form button {
+    background: linear-gradient(90deg, #ff4b5c, #ff8c00);
+    color: #fff;
+    padding: 1rem 2rem;
+    border: none;
+    borderRadius: 10px;
+    font-size: 1.2rem;
+    fontWeight: 700;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .upload-form button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(255, 75, 92, 0.5);
+  }
+  
+  /* Detail Page */
+  .resource-detail {
+    background: linear-gradient(145deg, #ffffff, #f0f4ff);
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+    margin: 3rem auto;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .resource-detail p {
+    background: #fff5e6;
+    padding: 1.5rem;
+    border-radius: 12px;
+    color: #1a2a44;
+    font-size: 1.2rem;
+    border-left: 5px solid #ff8c00;
+  }
+  
+  /* Loading State */
+  .loading {
+    text-align: center;
+    margin: 3rem;
+    color: #ff8c00;
+    font-size: 1.5rem;
+    font-weight: 500;
+    animation: pulse 1.5s infinite;
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes popUp {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
+  @keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+  }
+  
+  @keyframes bounceIn {
+    0% { opacity: 0; transform: scale(0.3) translateY(50px); }
+    60% { opacity: 1; transform: scale(1.1) translateY(-10px); }
+    80% { transform: scale(0.95) translateY(5px); }
+    100% { transform: scale(1) translateY(0); }
+  }
