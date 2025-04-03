@@ -74,3 +74,53 @@ Today, we finalized the file upload feature for the Student Resource Sharing Pla
 - **GitHub Push**: Staged all changes (`git add .`), committed with `git commit -m "Added file upload and download functionality, fixed card clickability"`, and force-pushed to the `gluna1624` branch of `LIUSpring2025/CS-691` using `git push origin HEAD:gluna1624 --force`.
 
 The platform now supports uploading, displaying, and downloading files, with all resources clickable in the "Shared Resources" section.
+
+## Database Schema
+
+The `student_platform` database supports the Student Resource Sharing Platform with three tables, designed to manage users, resources, and comments. Below is the detailed schema as of April 3, 2025:
+
+### `users` Table
+Stores user authentication and role data.
+
+| Column     | Type         | Null | Key         | Default | Extra          | Description                  |
+|------------|--------------|------|-------------|---------|----------------|------------------------------|
+| `id`       | `INT`        | NO   | PRIMARY     | NULL    | AUTO_INCREMENT | Unique user identifier       |
+| `username` | `VARCHAR(255)` | NO   |             | NULL    |                | User’s login name            |
+| `password` | `VARCHAR(255)` | NO   |             | NULL    |                | Hashed password (bcrypt)     |
+| `isAdmin`  | `INT`        | NO   |             | NULL    |                | Admin status (0 = no, 1 = yes) |
+
+### `resources` Table
+Holds shared resources, including optional file attachments.
+
+| Column       | Type         | Null | Key         | Default | Extra          | Description                  |
+|--------------|--------------|------|-------------|---------|----------------|------------------------------|
+| `id`         | `INT`        | NO   | PRIMARY     | NULL    | AUTO_INCREMENT | Unique resource identifier   |
+| `title`      | `VARCHAR(255)` | YES  |             | NULL    |                | Resource title               |
+| `description`| `TEXT`       | YES  |             | NULL    |                | Resource description         |
+| `category`   | `VARCHAR(50)` | YES  |             | NULL    |                | Resource category (e.g., Math) |
+| `user_id`    | `INT`        | YES  | FOREIGN     | NULL    |                | Links to `users(id)`         |
+| `file_path`  | `VARCHAR(255)` | YES  |             | NULL    |                | Server path to uploaded file |
+| `file_name`  | `VARCHAR(255)` | YES  |             | NULL    |                | Original file name           |
+
+- **Foreign Key**: `user_id` references `users(id)` (nullable, as some resources may predate user association).
+
+### `comments` Table
+Manages comments on resources.
+
+| Column       | Type         | Null | Key         | Default | Extra          | Description                  |
+|--------------|--------------|------|-------------|---------|----------------|------------------------------|
+| `id`         | `INT`        | NO   | PRIMARY     | NULL    | AUTO_INCREMENT | Unique comment identifier    |
+| `resource_id`| `INT`        | YES  | FOREIGN     | NULL    |                | Links to `resources(id)`     |
+| `user_id`    | `INT`        | YES  | FOREIGN     | NULL    |                | Links to `users(id)`         |
+| `content`    | `TEXT`       | YES  |             | NULL    |                | Comment text                 |
+
+- **Foreign Keys**: 
+  - `resource_id` references `resources(id)` (nullable, for flexibility).
+  - `user_id` references `users(id)` (nullable, for legacy comments).
+
+### Relationships
+- One `user` can create many `resources` (1:N).
+- One `resource` can have many `comments` (1:N).
+- One `user` can post many `comments` (1:N).
+
+This schema supports user authentication, resource sharing with file uploads, and commenting, all integrated with the Node.js backend and React frontend.
