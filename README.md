@@ -64,3 +64,13 @@ This afternoon, we kept the momentum going with more enhancements:
 - Port: Uses 5001.
 - Search: Ensure database has data; use `LEFT JOIN` for resources with no `user_id`.
 - Routing: Verify all routes in `App.jsx`.
+
+## April 3, 2025 - File Uploads, Downloads, and GitHub Push
+
+Today, we finalized the file upload feature for the Student Resource Sharing Platform:
+- **File Uploads**: Tested and debugged file uploads in `ResourceUpload.jsx` and `server/index.js`, using `multer` to save files to `uploads/`. Successfully uploaded "Informal Writing assigment 3 .docx" (`id: 9`), stored in the `resources` table with `file_path` and `file_name`.
+- **Card Clickability**: Fixed an issue where resource cards (e.g., "Applied Physics" and "informal Writing") weren’t clickable in `ResourceList.jsx`. Added explicit `<Link>` styling and ensured unique keys, making all cards navigable.
+- **File Downloads**: Added a download link in `ResourceDetail.jsx`, connecting to `GET /resources/:id/file` to retrieve files (e.g., downloaded "Informal Writing assigment 3 .docx" from `/resources/9`).
+- **GitHub Push**: Staged all changes (`git add .`), committed with `git commit -m "Added file upload and download functionality, fixed card clickability"`, and force-pushed to the `gluna1624` branch of `LIUSpring2025/CS-691` using `git push origin HEAD:gluna1624 --force`.
+
+The platform now supports uploading, displaying, and downloading files, with all resources clickable in the "Shared Resources" section.

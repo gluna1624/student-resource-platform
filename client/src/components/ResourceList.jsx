@@ -13,12 +13,15 @@ function ResourceList() {
   useEffect(() => {
     const url = category ? `http://localhost:5001/resources?category=${category}` : 'http://localhost:5001/resources';
     axios.get(url)
-      .then((response) => setResources(response.data))
+      .then((response) => {
+        console.log('Resources fetched:', response.data);
+        setResources(response.data.map(r => ({ ...r, key: r.id }))); // Ensure unique key
+      })
       .catch((error) => console.error('Error fetching resources:', error));
   }, [category]);
 
   const handleSearch = (searchResults) => {
-    setResources(searchResults);
+    setResources(searchResults.map(r => ({ ...r, key: r.id })));
   };
 
   return (
@@ -61,7 +64,17 @@ function ResourceList() {
               animation: `bounceIn 0.6s ease-in-out ${index * 0.1}s both`,
             }}
           >
-            <Link to={`/resources/${resource.id}`}>{resource.title} ({resource.category || 'Uncategorized'})</Link>
+            <Link
+              to={`/resources/${resource.id}`}
+              style={{
+                textDecoration: 'none',
+                color: '#ff4b5c',
+                display: 'block', // Ensure link fills the card
+                padding: '10px', // Add some clickable area
+              }}
+            >
+              {resource.title} ({resource.category || 'Uncategorized'}) - ID: {resource.id}
+            </Link>
           </li>
         ))}
       </ul>
@@ -69,4 +82,4 @@ function ResourceList() {
   );
 }
 
-export default ResourceList; 
+export default ResourceList;

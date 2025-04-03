@@ -3,9 +3,11 @@ const cors = require('cors');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
 
 const app = express();
 const SECRET_KEY = 'your-secret-key';
+const upload = multer({ dest: 'uploads/' });
 
 app.use(cors());
 app.use(express.json());
@@ -44,9 +46,13 @@ app.post('/login', async (req, res) => {
 
 const authenticate = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1];
+  console.log('Auth attempt - Token:', token);
   if (!token) return res.status(401).send('No token');
   jwt.verify(token, SECRET_KEY, (err, user) => {
-    if (err) return res.status(403).send('Invalid token');
+    if (err) {
+      console.log('Token verification failed:', err.message);
+      return res.status(403).send('Invalid token');
+    }
     req.user = user;
     next();
   });
@@ -60,10 +66,14 @@ const isAdmin = (req, res, next) => {
 app.get('/resources', async (req, res) => {
   const { category } = req.query;
   try {
-    const query = category ? 'SELECT * FROM resources WHERE category = ?' : 'SELECT * FROM resources';
+    const query = category 
+      ? 'SELECT r.*, u.username FROM resources r LEFT JOIN users u ON r.user_id = u.id WHERE r.category = ?' 
+      : 'SELECT r.*, u.username FROM resources r LEFT JOIN users u ON r.user_id = u.id';
     const [rows] = await db.query(query, category ? [category] : []);
+    console.log('Resources sent:', rows); // Added for debugging
     res.json(rows);
   } catch (error) {
+    console.error('Error fetching resources:', error);
     res.status(500).send('Server error');
   }
 });
@@ -71,16 +81,20 @@ app.get('/resources', async (req, res) => {
 app.get('/resources/search', async (req, res) => {
   const { q } = req.query;
   try {
-    const [rows] = await db.query('SELECT * FROM resources WHERE title LIKE ? OR description LIKE ?', [`%${q}%`, `%${q}%`]);
+    const [rows] = await db.query(
+      'SELECT r.*, u.username FROM resources r LEFT JOIN users u ON r.user_id = u.id WHERE r.title LIKE ? OR r.description LIKE ?', 
+      [`%${q}%`, `%${q}%`]
+    );
     res.json(rows);
   } catch (error) {
+    console.error('Error searching resources:', error);
     res.status(500).send('Server error');
   }
 });
 
 app.get('/resources/:id', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM resources WHERE id = ?', [req.params.id]);
+    const [rows] = await db.query('SELECT r.*, u.username FROM resources r LEFT JOIN users u ON r.user_id = u.id WHERE r.id = ?', [req.params.id]);
     if (rows.length > 0) res.json(rows[0]);
     else res.status(404).send('Resource not found');
   } catch (error) {
@@ -88,11 +102,28 @@ app.get('/resources/:id', async (req, res) => {
   }
 });
 
-app.post('/resources', authenticate, async (req, res) => {
+app.post('/resources', authenticate, upload.single('file'), async (req, res) => {
+  console.log('Upload request - Body:', req.body, 'File:', req.file);
   const { title, description, category } = req.body;
+  const filePath = req.file ? req.file.path : null;
+  const fileName = req.file ? req.file.originalname : null;
   try {
-    const [result] = await db.query('INSERT INTO resources (title, description, category) VALUES (?, ?, ?)', [title, description, category]);
-    res.status(201).json({ id: result.insertId, title, description, category });
+    const [result] = await db.query(
+      'INSERT INTO resources (title, description, category, user_id, file_path, file_name) VALUES (?, ?, ?, ?, ?, ?)',
+      [title, description, category, req.user.id, filePath, fileName]
+    );
+    res.status(201).json({ id: result.insertId, title, description, category, user_id: req.user.id, username: req.user.username, fileName });
+  } catch (error) {
+    console.error('Error uploading resource:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+app.get('/resources/:id/file', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT file_path, file_name FROM resources WHERE id = ?', [req.params.id]);
+    if (rows.length === 0 || !rows[0].file_path) return res.status(404).send('Resource not found');
+    res.download(rows[0].file_path, rows[0].file_name);
   } catch (error) {
     res.status(500).send('Server error');
   }
@@ -128,6 +159,15 @@ app.post('/resources/:id/comments', authenticate, async (req, res) => {
       [req.params.id, req.user.id, content]
     );
     res.status(201).json({ id: result.insertId, content, user_id: req.user.id, username: req.user.username });
+  } catch (error) {
+    res.status(500).send('Server error');
+  }
+});
+
+app.get('/users/:id/resources', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT r.* FROM resources r WHERE r.user_id = ?', [req.params.id]);
+    res.json(rows);
   } catch (error) {
     res.status(500).send('Server error');
   }

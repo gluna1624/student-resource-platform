@@ -5,6 +5,8 @@ import ResourceDetail from './components/ResourceDetail';
 import ResourceUpload from './components/ResourceUpload';
 import Login from './components/Login';
 import AdminPanel from './components/AdminPanel';
+import UserProfile from './components/UserProfile';
+import Register from './components/Register';
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
           <Route path="/upload" element={<ResourceUpload />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/users/:id" element={<UserProfile />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </div>
     </BrowserRouter>

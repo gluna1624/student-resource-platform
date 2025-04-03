@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 function Navbar() {
   const navigate = useNavigate();
-  const isLoggedIn = !!localStorage.getItem('token');
+  const token = localStorage.getItem('token');
+  const isLoggedIn = !!token;
+  const isAdmin = token ? jwtDecode(token).isAdmin : false;
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -73,6 +76,28 @@ function Navbar() {
         }}>
           Upload
         </Link>
+        {isAdmin && (
+          <Link to="/admin" style={{
+            color: '#fff',
+            textDecoration: 'none',
+            fontSize: '1.2rem',
+            fontWeight: '600',
+            padding: '0.5rem 1rem',
+            borderRadius: '8px',
+            background: 'rgba(255, 255, 255, 0.1)',
+            transition: 'background 0.3s ease, transform 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.background = 'rgba(255, 255, 255, 0.3)';
+            e.target.style.transform = 'scale(1.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+            e.target.style.transform = 'scale(1)';
+          }}>
+            Admin
+          </Link>
+        )}
         {isLoggedIn ? (
           <button
             onClick={handleLogout}
@@ -99,26 +124,48 @@ function Navbar() {
             Logout
           </button>
         ) : (
-          <Link to="/login" style={{
-            color: '#fff',
-            textDecoration: 'none',
-            fontSize: '1.2rem',
-            fontWeight: '600',
-            padding: '0.5rem 1rem',
-            borderRadius: '8px',
-            background: 'rgba(255, 255, 255, 0.1)',
-            transition: 'background 0.3s ease, transform 0.3s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.background = 'rgba(255, 255, 255, 0.3)';
-            e.target.style.transform = 'scale(1.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.background = 'rgba(255, 255, 255, 0.1)';
-            e.target.style.transform = 'scale(1)';
-          }}>
-            Login
-          </Link>
+          <>
+            <Link to="/login" style={{
+              color: '#fff',
+              textDecoration: 'none',
+              fontSize: '1.2rem',
+              fontWeight: '600',
+              padding: '0.5rem 1rem',
+              borderRadius: '8px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              transition: 'background 0.3s ease, transform 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = 'rgba(255, 255, 255, 0.3)';
+              e.target.style.transform = 'scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+              e.target.style.transform = 'scale(1)';
+            }}>
+              Login
+            </Link>
+            <Link to="/register" style={{
+              color: '#fff',
+              textDecoration: 'none',
+              fontSize: '1.2rem',
+              fontWeight: '600',
+              padding: '0.5rem 1rem',
+              borderRadius: '8px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              transition: 'background 0.3s ease, transform 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = 'rgba(255, 255, 255, 0.3)';
+              e.target.style.transform = 'scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+              e.target.style.transform = 'scale(1)';
+            }}>
+              Register
+            </Link>
+          </>
         )}
       </nav>
     </header>
