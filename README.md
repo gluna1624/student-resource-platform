@@ -124,3 +124,11 @@ Manages comments on resources.
 - One `user` can post many `comments` (1:N).
 
 This schema supports user authentication, resource sharing with file uploads, and commenting, all integrated with the Node.js backend and React frontend.
+
+### Steps for starting the project:
+- Terminal 1: brew services start mysql (database running). mysql -u root -p  password is root123
+- Terminal 2: cd ~/Desktop/student-resource-platform/server && node index.js (backend at http://localhost:5001).
+- Terminal 3: cd ~/Desktop/student-resource-platform/client && npm run dev (frontend at http://localhost:5173).
+- Visit http://localhost:5173 in your browser, log in as test with password test123, and use the app!
+- If anything fails (e.g., “port already in use”), close the terminal with Ctrl + C and retry the command.
+
