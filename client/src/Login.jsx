@@ -9,7 +9,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const { data } = await axios.post('http://localhost:5001/login', { username, password });
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/login`, { username, password });
       localStorage.setItem('token', data.token);
       navigate('/');
     } catch (error) {

@@ -11,7 +11,9 @@ function ResourceList() {
   const isAdmin = token ? jwtDecode(token).isAdmin : false;
 
   useEffect(() => {
-    const url = category ? `http://localhost:5001/resources?category=${category}` : 'http://localhost:5001/resources';
+    const url = category 
+      ? `${import.meta.env.VITE_API_URL}/resources?category=${category}` 
+      : `${import.meta.env.VITE_API_URL}/resources`;
     axios.get(url)
       .then((response) => {
         console.log('Resources fetched:', response.data);
@@ -69,8 +71,8 @@ function ResourceList() {
               style={{
                 textDecoration: 'none',
                 color: '#ff4b5c',
-                display: 'block', // Ensure link fills the card
-                padding: '10px', // Add some clickable area
+                display: 'block',
+                padding: '10px',
               }}
             >
               {resource.title} ({resource.category || 'Uncategorized'}) - ID: {resource.id}

@@ -6,17 +6,17 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 
 const app = express();
-const SECRET_KEY = 'your-secret-key';
+const SECRET_KEY = process.env.JWT_SECRET || 'your-secret-key';
 const upload = multer({ dest: 'uploads/' });
 
 app.use(cors());
 app.use(express.json());
 
 const db = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: 'root123',
-  database: 'student_platform',
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || 'root123',
+  database: process.env.DB_NAME || 'student_platform',
 });
 
 app.post('/register', async (req, res) => {
@@ -70,7 +70,7 @@ app.get('/resources', async (req, res) => {
       ? 'SELECT r.*, u.username FROM resources r LEFT JOIN users u ON r.user_id = u.id WHERE r.category = ?' 
       : 'SELECT r.*, u.username FROM resources r LEFT JOIN users u ON r.user_id = u.id';
     const [rows] = await db.query(query, category ? [category] : []);
-    console.log('Resources sent:', rows); // Added for debugging
+    console.log('Resources sent:', rows);
     res.json(rows);
   } catch (error) {
     console.error('Error fetching resources:', error);
@@ -173,8 +173,12 @@ app.get('/users/:id/resources', async (req, res) => {
   }
 });
 
+// Added root route
+app.get('/', (req, res) => res.send('Root works'));
+
 app.get('/test', (req, res) => res.send('Test works'));
 
-app.listen(5001, () => {
-  console.log('Server running on http://localhost:5001');
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`);
 });
