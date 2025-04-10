@@ -7,10 +7,12 @@
   
   body {
     font-family: 'Poppins', 'Arial', sans-serif;
-    background: linear-gradient(135deg, #e0eafc, #cfdef3);
+    background: linear-gradient(135deg, #ff8c00, #ff4b5c); /* Orange gradient */
     color: #1a1a2e;
     line-height: 1.6;
     min-height: 100vh;
+    display: block !important;
+    place-items: initial !important;
   }
   
   /* Typography */
