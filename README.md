@@ -143,5 +143,10 @@ Done: Converted frontend to TypeScript, fixed styling issues (centered layout, o
 
 Next: Convert backend to TypeScript, add voting/rating system for resources.
 
+Troubleshooting
+MySQL Not Starting: Run brew services start mysql.
 
+Port Conflict: If “port already in use,” stop the process with Ctrl+C and retry.
+
+No Data in Resource List: Ensure the backend is running and the database has data.
 
