@@ -2,14 +2,12 @@ const db = require("../models");
 const config = require("../config/auth.config");
 const User = db.user;
 const Role = db.role;
-
 const Op = db.Sequelize.Op;
 
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+var jwt = require("jsonwebtoken");
+var bcrypt = require("bcryptjs");
 
 exports.signup = (req, res) => {
-  // Create user
   User.create({
     username: req.body.username,
     email: req.body.email,
@@ -29,7 +27,6 @@ exports.signup = (req, res) => {
           });
         });
       } else {
-        // default role = user
         user.setRoles([1]).then(() => {
           res.send({ message: "User registered successfully!" });
         });
@@ -67,13 +64,11 @@ exports.signin = (req, res) => {
         expiresIn: 86400 // 24 hours
       });
 
+      var authorities = [];
       user.getRoles().then(roles => {
-        let authorities = [];
-
         for (let i = 0; i < roles.length; i++) {
           authorities.push("ROLE_" + roles[i].name.toUpperCase());
         }
-
         res.status(200).send({
           id: user.id,
           username: user.username,
@@ -86,4 +81,28 @@ exports.signin = (req, res) => {
     .catch(err => {
       res.status(500).send({ message: err.message });
     });
+};
+
+// ✅ NEW: Return current user info from token
+exports.currentUser = (req, res) => {
+  db.user.findByPk(req.userId, {
+    attributes: ["username", "email"],
+    include: [
+      {
+        model: db.role,
+        attributes: ["name"],
+        through: { attributes: [] }
+      }
+    ]
+  }).then(user => {
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    res.send({
+      username: user.username,
+      email: user.email,
+      roles: user.roles.map(role => role.name)
+    });
+  });
 };
