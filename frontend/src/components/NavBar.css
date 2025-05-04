@@ -1,0 +1,46 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    background: #4169E1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .navbar-brand h1 {
+    margin: 0;
+    color: #ffffff;
+    font-family: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 1.7em;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 30px;
+  }
+  
+  .nav-link {
+    color: #e6f0ff;
+    text-decoration: none;
+    font-family: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 1em;
+    font-weight: 400;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: color 0.2s ease, background 0.2s ease;
+  }
+  
+  .nav-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .nav-link:active {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.2);
+  }

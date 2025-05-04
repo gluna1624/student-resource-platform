@@ -1,0 +1,8 @@
+.env
+.env.local
+.env.aws
+node_modules/
+backend/uploads/
+frontend/dist/
+*.zip
+.DS_Storeproject_files_output.txt

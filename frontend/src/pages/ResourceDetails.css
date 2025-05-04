@@ -1,0 +1,40 @@
+.resource-details {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .error {
+    color: red;
+  }
+  
+  textarea {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  button {
+    padding: 10px 20px;
+    background: linear-gradient(45deg, var(--primary-color, #ff6b6b), #ff8e53);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background: linear-gradient(45deg, #ff8e53, var(--primary-color, #ff6b6b));
+  }
+  
+  .comments {
+    margin-top: 20px;
+  }
+  
+  .comment {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+  }
